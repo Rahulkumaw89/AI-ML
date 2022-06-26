@@ -1,16 +1,82 @@
-### Hi there 👋
+###l Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load
 
-<!--
-**Rahulkumaw89/Rahulkumaw89** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
-Here are some ideas to get you started:
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
+# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
+/kaggle/input/heights-and-weights/data.csv
+#importing csv dataset
+df=pd.read_csv("//kaggle//input//heights-and-weights//data.csv")
+df.head()
+Height	Weight
+0	1.47	52.21
+1	1.50	53.12
+2	1.52	54.48
+3	1.55	55.84
+4	1.57	57.20
+df.describe().T
+count	mean	std	min	25%	50%	75%	max
+Height	15.0	1.650667	0.114235	1.47	1.56	1.65	1.74	1.83
+Weight	15.0	62.078000	7.037515	52.21	56.52	61.29	67.19	74.46
+#checking rows and columns
+df.shape
+(15, 2)
+#importing library for data visualisation
+from matplotlib import pyplot as plt
+import seaborn as sns
+sns.scatterplot(x=df["Height"],y=df["Weight"],data=df)
+plt.xlabel("height",fontsize=15)
+plt.ylabel("weight",fontsize=15)
+plt.title("height vs weight",fontsize=15)
+plt.grid("black")
+plt.show()
+
+#spiliting the dataset into training and testing set
+from sklearn.model_selection import train_test_split
+x=df.iloc[0:,0:1].values
+y=df.iloc[0:,1:2].values
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=.2)
+#fitting simple linear regression to the training test
+from sklearn.linear_model import LinearRegression
+lg=LinearRegression()
+lg.fit(x_train,y_train)
+LinearRegression()
+#predicting the test set results
+y_pred=lg.predict(x_test)
+y_pred
+array([[71.07947368],
+       [54.10255016],
+       [61.98469322]])
+#visualization the training set results
+plt.scatter(x_train,y_train,color="blue")
+plt.plot(x_train,lg.predict(x_train),color="red")
+plt.title("height vs weight(training)")
+plt.xlabel("height")
+plt.ylabel("weight")
+plt.grid()
+
+plt.show()
+
+lg.coef_
+array([[60.63186973]])
+lg.intercept_
+array([-38.05789183])
+lg.score(x,y)
+0.9890283861148425
+#lets predict the weights of diffrent heights
+lg.predict([[1.40]])
+array([[46.82672579]])
+lg.predict([[1.80]])
+array([[71.07947368]])
+ 
